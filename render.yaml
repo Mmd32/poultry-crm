@@ -1,0 +1,53 @@
+services:
+  # ─── Django web service ────────────────────────────────
+  - type: web
+    name: poultry-crm-backend
+    runtime: python
+    rootDir: سبک/backend
+    buildCommand: pip install -r requirements.txt
+    preDeployCommand: python manage.py migrate --noinput && python manage.py collectstatic --noinput
+    startCommand: gunicorn config.wsgi --bind 0.0.0.0:$PORT
+    plan: free
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.production
+      - key: SECRET_KEY
+        value: GYvAJO918oQs6WJSbaZ5LPDlx7iqjouNjinUuWzU5VJozTsT2loHGJfVIEnuBFKZ9Ws
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: poultry-crm-db
+          property: connectionString
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://poultry-crm.vercel.app"
+
+  # ─── Celery beat (cron — یادآورهای خودکار) ────────────
+  - type: cron
+    name: poultry-crm-beat
+    runtime: python
+    rootDir: سبک/backend
+    buildCommand: pip install -r requirements.txt
+    schedule: "0 2 * * *"
+    command: python manage.py shell -c "from apps.reminders.tasks import mark_overdue_reminders; mark_overdue_reminders()"
+    plan: free
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.production
+      - key: SECRET_KEY
+        value: GYvAJO918oQs6WJSbaZ5LPDlx7iqjouNjinUuWzU5VJozTsT2loHGJfVIEnuBFKZ9Ws
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: poultry-crm-db
+          property: connectionString
+
+databases:
+  - name: poultry-crm-db
+    plan: free
+    databaseName: poultry_crm
