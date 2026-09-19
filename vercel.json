@@ -1,0 +1,9 @@
+{
+  "buildCommand": "cd سبک/frontend && npm install && npm run build",
+  "outputDirectory": "سبک/frontend/dist",
+  "installCommand": "cd سبک/frontend && npm install",
+  "framework": "vite",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

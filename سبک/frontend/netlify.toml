@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# وقتی بک‌اند را روی سروری آنلاین کردید، آدرس آن را اینجا بگذارید
+# تا درخواست‌های /api به آن هدایت شوند:
+# [[redirects]]
+#   from = "/api/*"
+#   to = "https://YOUR-BACKEND-URL.com/api/:splat"
+#   status = 200
+
+# SPA fallback — همه مسیرها به index.html برگردند (برای React Router)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
