@@ -1,12 +1,10 @@
 services:
-  # ─── Django web service ────────────────────────────────
   - type: web
     name: poultry-crm-backend
     runtime: python
-    rootDir: سبک/backend
-    buildCommand: pip install -r requirements.txt
-    preDeployCommand: python manage.py migrate --noinput && python manage.py collectstatic --noinput && python manage.py create_demo_users
-    startCommand: gunicorn config.wsgi --bind 0.0.0.0:$PORT
+    buildCommand: bash build.sh
+    preDeployCommand: bash predeploy.sh
+    startCommand: bash start.sh
     plan: free
     envVars:
       - key: DJANGO_SETTINGS_MODULE
@@ -26,14 +24,12 @@ services:
       - key: CORS_ALLOWED_ORIGINS
         value: "https://poultry-crm.vercel.app"
 
-  # ─── Celery beat (cron — یادآورهای خودکار) ────────────
   - type: cron
-    name: poultry-crm-beat
+    name: poultry-crm-overdue
     runtime: python
-    rootDir: سبک/backend
-    buildCommand: pip install -r requirements.txt
+    buildCommand: bash build.sh
     schedule: "0 2 * * *"
-    command: python manage.py shell -c "from apps.reminders.tasks import mark_overdue_reminders; mark_overdue_reminders()"
+    command: bash -c "cd سبک/backend && python manage.py shell -c 'from apps.reminders.tasks import mark_overdue_reminders; mark_overdue_reminders()'"
     plan: free
     envVars:
       - key: DJANGO_SETTINGS_MODULE
