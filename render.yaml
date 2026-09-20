@@ -3,7 +3,6 @@ services:
     name: poultry-crm-backend
     runtime: python
     buildCommand: bash build.sh
-    preDeployCommand: bash predeploy.sh
     startCommand: bash start.sh
     plan: free
     envVars:
