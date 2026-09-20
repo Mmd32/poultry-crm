@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider, useAuth } from './hooks/useAuth'
+import { AuthProvider } from './hooks/useAuth'
 import Layout from './components/Layout'
-import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Customers from './pages/Customers'
 import Farms from './pages/Farms'
@@ -11,34 +10,21 @@ import Feedbacks from './pages/Feedbacks'
 import Churn from './pages/Churn'
 import Offers from './pages/Offers'
 
-function PrivateRoute({ children }) {
-  const { user, loading } = useAuth()
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', color: 'var(--text-3)' }}>
-        در حال بارگذاری...
-      </div>
-    )
-  }
-  if (!user) return <Navigate to="/login" replace />
-  return <Layout>{children}</Layout>
-}
-
 function AppRoutes() {
-  const { user } = useAuth()
   return (
-    <Routes>
-      <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-      <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-      <Route path="/customers" element={<PrivateRoute><Customers /></PrivateRoute>} />
-      <Route path="/farms" element={<PrivateRoute><Farms /></PrivateRoute>} />
-      <Route path="/sales" element={<PrivateRoute><Sales /></PrivateRoute>} />
-      <Route path="/reminders" element={<PrivateRoute><Reminders /></PrivateRoute>} />
-      <Route path="/feedbacks" element={<PrivateRoute><Feedbacks /></PrivateRoute>} />
-      <Route path="/churn" element={<PrivateRoute><Churn /></PrivateRoute>} />
-      <Route path="/offers" element={<PrivateRoute><Offers /></PrivateRoute>} />
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
+    <Layout>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/customers" element={<Customers />} />
+        <Route path="/farms" element={<Farms />} />
+        <Route path="/sales" element={<Sales />} />
+        <Route path="/reminders" element={<Reminders />} />
+        <Route path="/feedbacks" element={<Feedbacks />} />
+        <Route path="/churn" element={<Churn />} />
+        <Route path="/offers" element={<Offers />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Layout>
   )
 }
 
